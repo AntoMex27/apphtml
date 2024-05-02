@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conceptualizacion de Servicios en la Nube</title>
+   
+</head>
+<body>
+    <h1>App web con base de datos</h1>
+
+    <!-- Formulario para agregar registros -->
+    <form id="addForm">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+        <button type="submit">Agregar</button>
+    </form>
+
+    <!-- Botones para consultar registros -->
+    <button onclick="showAllRecords()">Consultar Todos los Registros</button>
+    <form id="searchForm">
+        <label for="searchId">ID del Registro:</label>
+        <input type="number" id="searchId" required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Lista de registros -->
+    <ul id="recordList"></ul>
+
+    <script>
+        // Datos de ejemplo para la base de datos
+        let records = [
+            { id: 1, name: "Juan", email: "juan@example.com" },
+            { id: 2, name: "María", email: "maria@example.com" }
+        ];
+
+        // Función para renderizar la lista de registros
+        function renderRecords() {
+            const recordList = document.getElementById("recordList");
+            recordList.innerHTML = "";
+            records.forEach(record => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span>${record.id}</span>
+                    <span>${record.name}</span>
+                    <span>${record.email}</span>
+                    <button onclick="editRecord(${record.id})">Editar</button>
+                    <button onclick="deleteRecord(${record.id})">Eliminar</button>
+                `;
+                recordList.appendChild(li);
+            });
+        }
+
+        // Función para agregar un nuevo registro
+        document.getElementById("addForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const id = records.length + 1;
+            records.push({ id, name, email });
+            renderRecords();
+            document.getElementById("addForm").reset();
+        });
+
+        // Función para editar un registro
+        function editRecord(id) {
+            const newName = prompt("Ingrese el nuevo nombre:");
+            const newEmail = prompt("Ingrese el nuevo email:");
+            const index = records.findIndex(record => record.id === id);
+            if (index !== -1) {
+                records[index].name = newName;
+                records[index].email = newEmail;
+                renderRecords();
+            }
+        }
+
+        // Función para eliminar un registro
+        function deleteRecord(id) {
+            const index = records.findIndex(record => record.id === id);
+            if (index !== -1) {
+                records.splice(index, 1);
+                renderRecords();
+            }
+        }
+
+        // Función para mostrar todos los registros
+        function showAllRecords() {
+            renderRecords();
+        }
+
+        // Función para buscar un registro por ID
+        document.getElementById("searchForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const searchId = parseInt(document.getElementById("searchId").value);
+            const record = records.find(record => record.id === searchId);
+            if (record) {
+                const recordList = document.getElementById("recordList");
+                recordList.innerHTML = "";
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span>${record.id}</span>
+                    <span>${record.name}</span>
+                    <span>${record.email}</span>
+                    <button onclick="editRecord(${record.id})">Editar</button>
+                    <button onclick="deleteRecord(${record.id})">Eliminar</button>
+                `;
+                recordList.appendChild(li);
+            } else {
+                alert("Registro no encontrado.");
+            }
+        });
+
+        // Renderizar los registros al cargar la página
+        renderRecords();
+    </script>
+</body>
+</html>
